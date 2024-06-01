@@ -7,12 +7,13 @@ import time
 import random
 
 #Serial Connection to Arduino
-ser = serial.Serial('/dev/ttyACM0', baudrate = 9600, timeout = 0.05)
-#ser = serial.Serial('COM3', baudrate = 9600, timeout = 0.05)
+#ser = serial.Serial('/dev/ttyACM0', baudrate = 9600, timeout = 0.05)
+ser = serial.Serial('COM3', baudrate = 9600, timeout = 0.05)
 ser.reset_input_buffer()
 global autopilotstatus
 autopilotstatus = False
 autopilot = None
+tof_distance = ""
 
 def findCommandInString(text):
     if "motor1PW" in text:
@@ -29,9 +30,13 @@ def autopilotMode():
     while autopilotstatus:
         print(autopilotstatus)
         print("Sending Autopilot command")
-        leftD = round(random.random())
-        rightD = round(random.random())
-        ser.write(("55," + str(leftD)  + ",55," + str(rightD)  + ",\n").encode("UTF-8"))
+        if not tof_distance and int(tof_distance) > 150:
+            ser.write(("55," + str(1)  + ",55," + str(1)  + ",\n").encode("UTF-8"))
+        else:
+            leftD = round(random.random())
+            rightD = round(random.random())
+            ser.write(("55," + str(leftD)  + ",55," + str(rightD)  + ",\n").encode("UTF-8"))
+        
         time.sleep(2)
 
 def updateAutopilot(content_obj):
@@ -50,11 +55,14 @@ def createMotorString(content_obj):
 
 # create handler for each connection
 async def handler():
-    uri = "wss://hackathoncattoy.azurewebsites.net"
+    uri = "ws://localhost:3000"
     async with websockets.connect(uri) as websocket:
         await websocket.send("{\"request\": \"message from raspberry\"}")
         done = False
         while not done:
+            line = ser.readline()
+            tof_distance = line.decode('utf-8')
+            #print(tof_distance)
             time.sleep(10/1000)
             message = await websocket.recv()
             print(message)
