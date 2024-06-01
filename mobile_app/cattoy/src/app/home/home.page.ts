@@ -7,7 +7,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  myWebSocket: WebSocketSubject<any> = webSocket('wss://hackathoncattoy.azurewebsites.net');
+  myWebSocket: WebSocketSubject<any> = webSocket('ws://localhost:3000');
   directionValue: any = 50;
   moveValue: any = 50;
   maxSpeed = 70;
