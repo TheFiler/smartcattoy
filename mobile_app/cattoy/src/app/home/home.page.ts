@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -13,9 +14,11 @@ export class HomePage {
   maxSpeed = 70;
   connectionState: boolean = false;
   autopilotOn = false;
+  private file: File | null = null;
 
-  constructor() {
-    /*this.myWebSocket.subscribe(    
+  constructor(public alertController: AlertController) {
+    /*this.myWebSocket.
+    subscribe(    
       msg => console.log('message received: ' + msg), 
       // Called whenever there is a message from the server    
       err => console.log(err), 
@@ -46,7 +49,7 @@ export class HomePage {
 
     this.myWebSocket.asObservable().subscribe({
       next: data => {console.log(data); this.connectionState = true},
-      error: error => { console.log(error); this.connectionState = false },
+      error: error => { console.log(error); this.connectionState = false; this.presentAlert("Could not connect!", "Connection Error")},
       complete: () => { console.log("Connection Completed"); this.connectionState = false }
     });
   }
@@ -116,5 +119,61 @@ export class HomePage {
   releaseDirectionSlider() {
     console.log('releaseDirectionSlider');
     this.directionValue = 50;
+  }
+
+  sendStaticAudio(file: string){
+  if(/(\.mp3)$/i.test(file)){
+    this.myWebSocket.next({ "play_audio": file });
+  }else {
+    this.presentAlert("Nah nah nah, don't edit the app!")
+  }
+  }
+
+  handleFileInput(event: Event) {
+    const element = event.target as HTMLInputElement;
+    const files = element.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if(/(\.mp3|\.ogg|\.wav)$/i.test(file.name)) {
+        if(file.size > 10000000) {
+          this.file = null;
+          this.presentAlert("File too large, please select a file smaller than 10MB");
+        }else{
+          this.file = file;
+        }
+      }else{
+        this.file = null;
+        this.presentAlert("Wrong file format, please select an audio file");
+      }
+    } else {
+      console.error("No file selected!");
+      this.file = null;
+      this.presentAlert("Please select an audio file");
+    }
+  }
+
+  sendFile() {
+    if (this.file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(this.file);
+      reader.onload = () => {
+        console.log("Sending file: ", reader.result);
+        const base64 = reader.result as string;
+        this.myWebSocket.next({ "operation": "file_transfer", "file": base64});
+      };
+    } else {
+      console.error("No file selected!");
+      this.presentAlert("Please select an audio file");
+    }
+  }
+
+  async presentAlert(message: string, header: string = "File Upload Error") {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK']
+    });
+  
+    await alert.present();
   }
 }

@@ -29,6 +29,19 @@
             orient="horizontal" (input)="updateSlider()" (change)="releaseDirectionSlider()" />
         </ion-col>
       </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-button (click)="sendStaticAudio('truck_honk.mp3')">Play Sound 1</ion-button>
+          <ion-button (click)="sendStaticAudio('car_honk.mp3')">Play Sound 2</ion-button>
+          <ion-button (click)="sendStaticAudio('cashier_sound.mp3')">Play Sound 3</ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <input type="file" accept=".mp3, .ogg, .wav" (change)="handleFileInput($event)">
+          <ion-button (click)="sendFile()">Upload File</ion-button>
+        </ion-col>
+      </ion-row>
     </ion-grid>
   </div>
 </ion-content>
