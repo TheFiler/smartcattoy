@@ -9,15 +9,23 @@ import base64
 
 
 pygame.mixer.init()
+loop = asyncio.get_event_loop()
 
 def play_audio(audio_file_path):
     pygame.mixer.music.load(audio_file_path)
     pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy():
-        time.sleep(1/1000)
 
-    pygame.mixer.music.unload()
-    print(f"Audio file unloaded: {audio_file_path}")
+async def unload_audio():
+    while True:
+        await asyncio.sleep(1)
+        if not pygame.mixer.music.get_busy():
+            try:
+                pygame.mixer.music.unload()
+                print("Audio unloaded")
+                break
+            except Exception as e:
+                print(f"Error unloading audio: {e}")
+                break
 
 async def receive_file(fileName, fileData):
     if os.path.exists(fileName):
@@ -88,10 +96,15 @@ async def handler():
                     parsed_message = json.loads(message)
                     if "play_audio" in parsed_message:
                         handle_audio_command(parsed_message)
+                        asyncio.create_task(unload_audio())
                     elif "operation" in parsed_message and parsed_message["operation"] == "file_transfer":
                         file_name = get_rotating_filename(os.curdir, "audioFile", "mp3")
                         await receive_file(file_name, parsed_message["file"])
                         play_audio(file_name)
+                        asyncio.create_task(unload_audio())
+                    elif "stop_audio" in parsed_message:
+                        pygame.mixer.music.stop()
+                        print("Audio stopped")
                 except ValueError:
                     print("Could not parse message")
                     continue

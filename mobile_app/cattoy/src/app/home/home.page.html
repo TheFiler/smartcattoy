@@ -40,6 +40,7 @@
         <ion-col size="12">
           <input type="file" accept=".mp3, .ogg, .wav" (change)="handleFileInput($event)">
           <ion-button (click)="sendFile()">Upload File</ion-button>
+          <ion-button (click)="sendStopAudio()">Stop sound</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
