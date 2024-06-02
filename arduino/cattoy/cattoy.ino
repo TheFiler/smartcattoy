@@ -1,3 +1,8 @@
+#include <Wire.h>
+#include <VL6180X.h>
+
+VL6180X sensor;
+
 int ena = 11;
 int in1 = 12;
 int in2 = 10;
@@ -17,6 +22,11 @@ char payload[64];
 
 void setup() {
   Serial.begin(9600); 
+  Wire.begin();
+
+  sensor.init();
+  sensor.configureDefault();
+  sensor.setTimeout(500);
 
   pinMode(ena, OUTPUT);
   pinMode(in1, OUTPUT);
@@ -97,6 +107,10 @@ void loop() {
   } else {
     noUpdateCounter = noUpdateCounter + 1;
   }
+
+  Serial.print(sensor.readRangeSingleMillimeters());
+  //if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+  Serial.println();
 
   if(noUpdateCounter > 15) {
     updateMotorPower(0, 0);

@@ -8,7 +8,8 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  myWebSocket: WebSocketSubject<any> = webSocket('ws://localhost:3000');
+  //wss://hackathoncattoy.azurewebsites.net -> URL für azure Server, deshalb auch wss statt ws (webSocketSecure)
+  myWebSocket: WebSocketSubject<any> = webSocket('ws://192.168.224.195:3000');
   directionValue: any = 50;
   moveValue: any = 50;
   maxSpeed = 70;
@@ -176,7 +177,6 @@ export class HomePage {
   
     await alert.present();
   }
-
   sendStopAudio(){
     this.myWebSocket.next({ "stop_audio": true });
   }

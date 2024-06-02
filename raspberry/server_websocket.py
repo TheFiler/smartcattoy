@@ -26,7 +26,7 @@ def createMotorString(content_obj):
 # create handler for each connection
 async def handler(websocket, path):
     async for message in websocket:
-        #print(message)
+        print(message)
         await websocket.send("{\"successful\": true}")
         if "{" in message:
             positionOfContent = message.index("{")
@@ -38,7 +38,7 @@ async def handler(websocket, path):
                 print("SerialCommand: " + serialCommand)
                 #ser.write(str(serialCommand).encode("UTF-8"))
  
-start_server = websockets.serve(handler, "localhost", 8000)
+start_server = websockets.serve(handler, "localhost", 3000)
  
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
