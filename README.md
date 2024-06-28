@@ -34,7 +34,7 @@ The idea behind this project is to provide a cheap alternative to expensive toys
 
 ## Platform Overview
 
-![Platform Overview](https://raw.githubusercontent.com/TheFiler/smartcattoy/main/images/Overview.png)  
+![Platform Overview](https://raw.githubusercontent.com/rmm2908/smartcattoy/main/documentation/static/images/Overview.png)  
 
 The client application is developed using Ionic 7 with Angular and can be deployed to iOS, Android and the Web.
 
@@ -50,7 +50,7 @@ It is a NodeJS Express application that acts as an intermediary to establish con
 
 ## Hardware Overview
 
-![Hardware Overview](https://github.com/TheFiler/smartcattoy/blob/main/images/HardwareOverview.png)  
+![Hardware Overview](https://raw.githubusercontent.com/rmm2908/smartcattoy/main/documentation/static/images/HardwareOverview.png)  
 
 A raspberry pi acts as the central logic hub, which is powered by a power bank.
 It is directly connected to an Arduino Uno over a USB Serial Connection to establish bidirectional communication.
